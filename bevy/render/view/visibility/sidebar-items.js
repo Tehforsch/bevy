@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["VisibilitySystems"],"fn":["calculate_bounds","check_visibility","update_frusta"],"struct":["ComputedVisibility","NoFrustumCulling","RenderLayers","Visibility","VisibilityBundle","VisibilityPlugin","VisibleEntities"],"type":["Layer"]};

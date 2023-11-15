@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["EventId","EventReader","EventWriter","Events","ManualEventReader"],"trait":["Event"]};

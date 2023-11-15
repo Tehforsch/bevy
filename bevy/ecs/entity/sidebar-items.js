@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AllocAtWithoutReplacement","MapEntitiesError"],"struct":["Entities","Entity","EntityLocation","EntityMap","EntityMeta","ReserveEntitiesIterator"],"trait":["MapEntities"]};
