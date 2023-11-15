@@ -20,14 +20,6 @@ mod impls {
     #[cfg(feature = "smallvec")]
     mod smallvec;
     mod std;
-
-    #[cfg(feature = "glam")]
-    pub use self::glam::*;
-    #[cfg(feature = "bevy_math")]
-    pub use self::rect::*;
-    #[cfg(feature = "smallvec")]
-    pub use self::smallvec::*;
-    pub use self::std::*;
 }
 
 mod enums;
@@ -47,7 +39,6 @@ pub mod prelude {
 pub use array::*;
 pub use enums::*;
 pub use fields::*;
-pub use impls::*;
 pub use list::*;
 pub use map::*;
 pub use path::*;

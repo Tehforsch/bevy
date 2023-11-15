@@ -733,7 +733,7 @@ impl Stage for SystemStage {
             // Evaluate system run criteria.
             for index in 0..self.run_criteria.len() {
                 let (run_criteria, tail) = self.run_criteria.split_at_mut(index);
-                let mut criteria = &mut tail[0];
+                let criteria = &mut tail[0];
 
                 #[cfg(feature = "trace")]
                 let _span =
