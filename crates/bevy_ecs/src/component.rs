@@ -1,7 +1,6 @@
 //! Types for declaring and storing [`Component`]s.
 
 use crate::{
-    change_detection::MAX_CHANGE_AGE,
     storage::{SparseSetIndex, Storages},
     system::Resource,
 };
@@ -519,55 +518,26 @@ impl Components {
 
 /// Records when a component was added and when it was last mutably dereferenced (or added).
 #[derive(Copy, Clone, Debug)]
-pub struct ComponentTicks {
-    pub(crate) added: u32,
-    pub(crate) changed: u32,
-}
+pub struct ComponentTicks {}
 
 impl ComponentTicks {
     #[inline]
     /// Returns `true` if the component was added after the system last ran.
-    pub fn is_added(&self, last_change_tick: u32, change_tick: u32) -> bool {
-        // This works even with wraparound because the world tick (`change_tick`) is always "newer" than
-        // `last_change_tick` and `self.added`, and we scan periodically to clamp `ComponentTicks` values
-        // so they never get older than `u32::MAX` (the difference would overflow).
-        //
-        // The clamp here ensures determinism (since scans could differ between app runs).
-        let ticks_since_insert = change_tick.wrapping_sub(self.added).min(MAX_CHANGE_AGE);
-        let ticks_since_system = change_tick
-            .wrapping_sub(last_change_tick)
-            .min(MAX_CHANGE_AGE);
-
-        ticks_since_system > ticks_since_insert
+    pub fn is_added(&self, _last_change_tick: u32, _change_tick: u32) -> bool {
+        true
     }
 
     #[inline]
     /// Returns `true` if the component was added or mutably dereferenced after the system last ran.
-    pub fn is_changed(&self, last_change_tick: u32, change_tick: u32) -> bool {
-        // This works even with wraparound because the world tick (`change_tick`) is always "newer" than
-        // `last_change_tick` and `self.changed`, and we scan periodically to clamp `ComponentTicks` values
-        // so they never get older than `u32::MAX` (the difference would overflow).
-        //
-        // The clamp here ensures determinism (since scans could differ between app runs).
-        let ticks_since_change = change_tick.wrapping_sub(self.changed).min(MAX_CHANGE_AGE);
-        let ticks_since_system = change_tick
-            .wrapping_sub(last_change_tick)
-            .min(MAX_CHANGE_AGE);
-
-        ticks_since_system > ticks_since_change
+    pub fn is_changed(&self, _last_change_tick: u32, _change_tick: u32) -> bool {
+        true
     }
 
-    pub(crate) fn new(change_tick: u32) -> Self {
-        Self {
-            added: change_tick,
-            changed: change_tick,
-        }
+    pub(crate) fn new(_change_tick: u32) -> Self {
+        Self {}
     }
 
-    pub(crate) fn check_ticks(&mut self, change_tick: u32) {
-        check_tick(&mut self.added, change_tick);
-        check_tick(&mut self.changed, change_tick);
-    }
+    pub(crate) fn check_ticks(&mut self, _change_tick: u32) {}
 
     /// Manually sets the change tick.
     ///
@@ -584,16 +554,5 @@ impl ComponentTicks {
     /// component_ticks.set_changed(world.read_change_tick());
     /// ```
     #[inline]
-    pub fn set_changed(&mut self, change_tick: u32) {
-        self.changed = change_tick;
-    }
-}
-
-fn check_tick(last_change_tick: &mut u32, change_tick: u32) {
-    let age = change_tick.wrapping_sub(*last_change_tick);
-    // This comparison assumes that `age` has not overflowed `u32::MAX` before, which will be true
-    // so long as this check always runs before that can happen.
-    if age > MAX_CHANGE_AGE {
-        *last_change_tick = change_tick.wrapping_sub(MAX_CHANGE_AGE);
-    }
+    pub fn set_changed(&mut self, _change_tick: u32) {}
 }
